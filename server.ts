@@ -1,0 +1,52 @@
+import {createServer} from 'node:http';
+import jwt from 'jsonwebtoken';
+import {ACCESS_TOKEN, PORT} from './server-config';
+import {executeRunner} from './runner';
+
+const server = createServer(async (req, res) => {
+  let payload;
+  let hookUrl: string = '';
+  let hookToken: string = '';
+  let sub: string;
+  try {
+    payload = jwt.verify(req.headers.authorization.split(' ')[1], ACCESS_TOKEN);
+    hookUrl = payload.hookUrl;
+    hookToken = payload.hookToken;
+    sub = payload.sub;
+  } catch {
+    res.writeHead(401);
+    res.end('NOT AUTHORIZED');
+    return;
+  }
+
+  const buffers = [];
+  let data: any = {};
+  try {
+    for await (const chunk of req) {
+      buffers.push(chunk);
+    }
+    data = JSON.parse(Buffer.concat(buffers).toString());
+  } catch {
+    res.writeHead(400);
+    res.end('DATA NOT VALID');
+    return;
+  }
+
+  const {app, apps, vm, registry, script, runner} = data;
+
+  const env = {
+    ...process.env,
+    APP: app,
+    APPS: apps,
+    VM: vm,
+    REGISTRY: registry,
+    SCRIPT: script,
+  }
+
+  executeRunner({runner, sub, env, hookUrl, hookToken});
+
+  res.writeHead(200);
+  res.end('OK');
+});
+
+server.listen(PORT);
