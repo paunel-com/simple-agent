@@ -1,5 +1,5 @@
-import {intoMachine} from './ssh';
-import {SCRIPT, VM} from '../config';
+import {intoMachine} from '../../services/ssh';
+import {SCRIPT, VM} from '../../../config';
 
 class RemoteRun {
   async runBashScript ($, bashScript){

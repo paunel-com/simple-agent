@@ -1,6 +1,6 @@
-import {intoMachine} from './ssh';
-import {addAppConfig, createNginxConfig, runNginxWithConf} from './nginx-manager';
-import {APPS, DOCKER_NETWORK_NAME, VM} from '../config';
+import {intoMachine} from '../../services/ssh';
+import {addAppConfig, createNginxConfig, runNginxWithConf} from '../../services/nginx-manager';
+import {APPS, DOCKER_NETWORK_NAME, VM} from '../../../config';
 
 class ConfigureNginx {
   async run(apps, vm) {

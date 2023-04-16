@@ -1,11 +1,20 @@
 import {spawn} from 'child_process';
+import {join} from 'path';
 import jwt from 'jsonwebtoken';
 
 const ERROR_MSG = 'error in running scripts in vm';
 
-export function executeRunner({runner, sub, env, hookUrl, hookToken}) {
+const INVALID_PATH_CHARS = /[./\\]/;
+
+export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
+
+  if (INVALID_PATH_CHARS.test(runner) || INVALID_PATH_CHARS.test(kind)) {
+    return;
+  }
+
   let hasError = false;
-  spawn(`tsx`, `runners/${runner}.ts`.split(' '), {
+  const runnerPath = join('runners/kinds', kind, `${runner}.ts`);
+  spawn(`tsx`, runnerPath.split(' '), {
     cwd: process.cwd(),
     env,
     stdio: 'inherit',

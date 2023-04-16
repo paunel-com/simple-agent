@@ -1,7 +1,7 @@
-import {intoMachine} from './ssh';
-import {addAppConfig, createNginxConfig, removeAppConfig, runNginxWithConf} from './nginx-manager';
-import type {IEnvVar} from '../types/env-var';
-import {APP, DOCKER_NETWORK_NAME, REGISTRY, VM} from '../config';
+import {intoMachine} from '../../services/ssh';
+import {addAppConfig, createNginxConfig, removeAppConfig, runNginxWithConf} from '../../services/nginx-manager';
+import type {IEnvVar} from '../../../types/env-var';
+import {APP, DOCKER_NETWORK_NAME, REGISTRY, VM} from '../../../config';
 
 class DeployApp {
   async run(app, vm, registry) {

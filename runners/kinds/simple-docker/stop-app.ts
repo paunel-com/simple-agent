@@ -1,5 +1,5 @@
-import {intoMachine} from './ssh';
-import {APP, VM} from '../config';
+import {intoMachine} from '../../services/ssh';
+import {APP, VM} from '../../../config';
 
 class StopApp {
 
