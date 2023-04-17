@@ -1,9 +1,9 @@
 import {intoMachine} from '../../services/ssh';
 import {APP, VM} from '../../../config';
+import {IApp} from '../../../types/app';
 
 class StopApp {
-
-  async stopApp($, app) {
+  async stopApp($, app: IApp) {
     try {
       await $`(docker rm -f ${app.internalHostname}) && echo "docker rm"`;
       await $`docker image rm -f ${app.imageUrl}`;
@@ -13,14 +13,14 @@ class StopApp {
     }
   }
 
-  async run(app, vm) {
+  async run(app: IApp, vm) {
     await intoMachine(vm, ($) => this.stopApp($, app));
   }
 }
 
 const runner = new StopApp();
 
-console.log('running remove script', APP._id, VM._id);
+console.log('running remove script', APP.identifier, VM.identifier);
 runner.run(APP, VM)
   .then(() => {
     console.log('finished')

@@ -2,6 +2,7 @@
 import {Client} from 'ssh2';
 import {ProcessPromise, ProcessOutput, $} from 'zx';
 import chalk from 'chalk';
+import {IVm} from '../../types/vm';
 
 
 if (process.env.NODE_ENV === 'production') {
@@ -315,7 +316,7 @@ function exitCodeInfo(exitCode) {
   );
 }
 
-export async function intoMachine(vm, callback) {
+export async function intoMachine(vm: IVm, callback) {
   try {
     await ssh({
       user: vm.username,

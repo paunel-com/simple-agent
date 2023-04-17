@@ -1,14 +1,16 @@
 import {intoMachine} from '../../services/ssh';
 import {addAppConfig, createNginxConfig, removeAppConfig, runNginxWithConf} from '../../services/nginx-manager';
-import type {IEnvVar} from '../../../types/env-var';
 import {APP, DOCKER_NETWORK_NAME, REGISTRY, VM} from '../../../config';
+import {IApp} from '../../../types/app';
+import {IVm} from '../../../types/vm';
+import {IDockerRegistry} from '../../../types/registry';
 
 class DeployApp {
-  async run(app, vm, registry) {
+  async run(app: IApp, vm: IVm, registry?: IDockerRegistry) {
     await intoMachine(vm, ($) => this.deployApp($, registry, app));
   }
 
-  async deployApp ($, registry, app) {
+  async deployApp ($, registry, app: IApp) {
     try {
       await $`docker network create ${DOCKER_NETWORK_NAME}`;
     } catch (e) {
@@ -45,7 +47,7 @@ class DeployApp {
     await this.checkGateway($, app);
   }
 
-  async checkGateway($, app) {
+  async checkGateway($, app: IApp) {
     await createNginxConfig($)
     if (app.onlyInternal) {
       await removeAppConfig($, app);
@@ -55,8 +57,8 @@ class DeployApp {
     await runNginxWithConf($, DOCKER_NETWORK_NAME);
   }
 
-  async createEnvFile($, app) {
-    const envs: IEnvVar[] = (app.envs || []).map(env => `${env.key}=${env.value}`).join('\n');
+  async createEnvFile($, app: IApp) {
+    const envs = (app.envs || []).map(env => `${env.key}=${env.value}`).join('\n');
 
     await $`echo ${envs} > ${app.internalHostname}.env`;
   }
@@ -64,7 +66,7 @@ class DeployApp {
 
 const runner = new DeployApp();
 
-console.log('running deployment script', APP._id, VM._id);
+console.log('running deployment script', APP.identifier, VM.identifier);
 runner.run(APP, VM, REGISTRY)
   .then(() => {
     console.log('finished')

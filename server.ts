@@ -32,7 +32,7 @@ const server = createServer(async (req, res) => {
     return;
   }
 
-  const {app, apps, vm, registry, script, runner} = data;
+  const {app, apps, vm, registry, script, runner, kind} = data;
 
   const env = {
     ...process.env,
@@ -43,7 +43,7 @@ const server = createServer(async (req, res) => {
     SCRIPT: script,
   }
 
-  executeRunner({runner, sub, env, hookUrl, hookToken});
+  executeRunner({runner, kind, sub, env, hookUrl, hookToken});
 
   res.writeHead(200);
   res.end('OK');

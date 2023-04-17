@@ -1,3 +1,5 @@
+import {IApp} from '../../types/app';
+
 export const BASIC_STRUCTURE = `
 events {
     worker_connections  1024;
@@ -115,7 +117,7 @@ http {
 }
 `
 
-export function getServerBlock(id, hostname, internalHostname, port = 80) {
+export function getServerBlock(id, hostname: string, internalHostname: string, port: string | number = 80) {
   return `
   # PROXY FOR APP: ${id}
       server {
@@ -142,13 +144,13 @@ export async function createNginxConfig($) {
    fi;`
 }
 
-export async function addAppConfig($, app) {
+export async function addAppConfig($, app: IApp) {
   await $`CONF_VALUE=$(cat nginx.conf)
-  if [[ "$CONF_VALUE" != *"# PROXY FOR APP: ${app._id}"* ]];
+  if [[ "$CONF_VALUE" != *"# PROXY FOR APP: ${app.identifier}"* ]];
   then
     INSERT_LINE=$(awk "/# PAUNEL_SERVER_PLACEHOLDER/{ print NR; exit }" nginx.conf);
     echo $INSERT_LINE;
-    CONTENT=${getServerBlock(app._id, app.hostname, app.internalHostname, app.port)}
+    CONTENT=${getServerBlock(app.identifier, app.hostname, app.internalHostname, app.port)}
     awk -v "INSERT_LINE=$INSERT_LINE" -v "CONTENT=$CONTENT" 'NR==INSERT_LINE{print CONTENT}1' nginx.conf > new_nginx.conf;
     mv new_nginx.conf nginx.conf
     echo "run" > rerun.txt;
@@ -156,11 +158,11 @@ export async function addAppConfig($, app) {
 }
 
 
-export async function removeAppConfig($, app) {
+export async function removeAppConfig($, app: IApp) {
   await $`CONF_VALUE=$(cat nginx.conf)
-  if [[ "$CONF_VALUE" == *"# PROXY FOR APP: ${app._id}"* ]];
+  if [[ "$CONF_VALUE" == *"# PROXY FOR APP: ${app.identifier}"* ]];
   then
-    awk '/# PROXY FOR APP: ${app._id}/,/# END PROXY FOR APP: ${app._id}/{next}1' nginx.conf > new_nginx.conf;
+    awk '/# PROXY FOR APP: ${app.identifier}/,/# END PROXY FOR APP: ${app.identifier}/{next}1' nginx.conf > new_nginx.conf;
     mv new_nginx.conf nginx.conf
     echo "run" > rerun.txt;
   fi;`
