@@ -8,6 +8,8 @@ const server = createServer(async (req, res) => {
   let hookUrl: string = '';
   let hookToken: string = '';
   let sub: string;
+
+  // verify authorization token
   try {
     payload = jwt.verify(req.headers.authorization.split(' ')[1], ACCESS_TOKEN);
     hookUrl = payload.hookUrl;
@@ -19,6 +21,7 @@ const server = createServer(async (req, res) => {
     return;
   }
 
+  // read the body
   const buffers = [];
   let data: any = {};
   try {
@@ -43,6 +46,7 @@ const server = createServer(async (req, res) => {
     SCRIPT: script,
   }
 
+  // execute the runner
   executeRunner({runner, kind, sub, env, hookUrl, hookToken});
 
   res.writeHead(200);

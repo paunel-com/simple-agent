@@ -13,6 +13,8 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
   }
 
   let hasError = false;
+
+  // execute the runner on another process
   const runnerPath = join('runners/kinds', kind, `${runner}.ts`);
   spawn(`tsx`, runnerPath.split(' '), {
     cwd: process.cwd(),
@@ -20,6 +22,7 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
     stdio: 'inherit',
   })
     .on('close', () => {
+      // update the hook url when the runner finished
       fetch(hookUrl, {
         headers: {authorization: 'Bearer ' + jwt.sign({runner, sub}, hookToken), 'Content-Type': 'application/json'},
         body: JSON.stringify({success: !hasError})
