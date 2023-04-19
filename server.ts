@@ -47,10 +47,14 @@ const server = createServer(async (req, res) => {
   }
 
   // execute the runner
-  executeRunner({runner, kind, sub, env, hookUrl, hookToken});
-
-  res.writeHead(200);
-  res.end('OK');
+  try {
+    await executeRunner({runner, kind, sub, env, hookUrl, hookToken});
+    res.writeHead(200);
+    res.end('success');
+  } catch (err) {
+    res.writeHead(500);
+    res.end('failed')
+  }
 });
 
 server.listen(PORT);

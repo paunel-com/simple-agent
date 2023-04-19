@@ -9,29 +9,38 @@ const INVALID_PATH_CHARS = /[./\\]/;
 export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
 
   if (INVALID_PATH_CHARS.test(runner) || INVALID_PATH_CHARS.test(kind)) {
-    return;
+    throw new Error('runner does not exist');
   }
 
   let hasError = false;
 
   // execute the runner on another process
   const runnerPath = join('runners/kinds', kind, `${runner}.ts`);
-  spawn(`tsx`, runnerPath.split(' '), {
-    cwd: process.cwd(),
-    env,
-    stdio: 'inherit',
-  })
-    .on('close', () => {
-      // update the hook url when the runner finished
-      fetch(hookUrl, {
-        headers: {authorization: 'Bearer ' + jwt.sign({runner, sub}, hookToken), 'Content-Type': 'application/json'},
-        body: JSON.stringify({success: !hasError})
-      }).catch(() => null);
+  return new Promise((resolve, reject) => {
+    spawn(`tsx`, runnerPath.split(' '), {
+      cwd: process.cwd(),
+      env,
+      stdio: 'inherit',
     })
-    .stdout
-    .on('data', (data = '') => {
-      if (!hasError && data.toString().includes(ERROR_MSG)) {
-        hasError = true;
-      }
-    });
+      .on('close', () => {
+        // update the hook url when the runner finished
+        if (hasError) {
+          reject(new Error('runner failed'))
+        } else {
+          resolve({success: true})
+        }
+        if (hookUrl) {
+          fetch(hookUrl, {
+            headers: {authorization: 'Bearer ' + jwt.sign({runner, sub}, hookToken), 'Content-Type': 'application/json'},
+            body: JSON.stringify({success: !hasError})
+          }).catch(() => null);
+        }
+      })
+      .stdout
+      .on('data', (data = '') => {
+        if (!hasError && data.toString().includes(ERROR_MSG)) {
+          hasError = true;
+        }
+      });
+  })
 }
