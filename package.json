@@ -2,7 +2,7 @@
   "name": "@paunel/ssh-run",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.ts",
   "scripts": {
     "dev": "tsx watch server.ts",
     "start": "node --loader tsx server.ts",

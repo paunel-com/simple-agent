@@ -2,6 +2,7 @@ import {createServer} from 'node:http';
 import jwt from 'jsonwebtoken';
 import {ACCESS_TOKEN, PORT} from './server-config';
 import {executeRunner} from './runner';
+import {getMachine, getRegistry} from './services/local-storage.service';
 
 const server = createServer(async (req, res) => {
   let payload;
@@ -41,8 +42,8 @@ const server = createServer(async (req, res) => {
     ...process.env,
     APP: app,
     APPS: apps,
-    VM: vm,
-    REGISTRY: registry,
+    VM: getMachine(vm?.identifier) || vm,
+    REGISTRY: getRegistry(registry?.identifier) || registry,
     SCRIPT: script,
   }
 
