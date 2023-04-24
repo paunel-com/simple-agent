@@ -1,4 +1,4 @@
-import {createServer} from 'node:http';
+import {createServer} from 'http';
 import jwt from 'jsonwebtoken';
 import {ACCESS_TOKEN, PORT} from './server-config';
 import {executeRunner} from './runner';
@@ -13,6 +13,7 @@ const server = createServer(async (req, res) => {
   // verify authorization token
   try {
     payload = jwt.verify(req.headers.authorization.split(' ')[1], ACCESS_TOKEN);
+
     hookUrl = payload.hookUrl;
     hookToken = payload.hookToken;
     sub = payload.sub;
@@ -58,4 +59,6 @@ const server = createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT);
+server.listen(PORT, () => {
+  console.log('listening on port', PORT)
+});

@@ -17,6 +17,10 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
   // execute the runner on another process
   const runnerPath = join('runners/kinds', kind, `${runner}.ts`);
   return new Promise((resolve, reject) => {
+    console.log(runnerPath, env);
+    if (process.env.NODE_ENV !== 'production') {
+      return;
+    }
     spawn(`tsx`, runnerPath.split(' '), {
       cwd: process.cwd(),
       env,
