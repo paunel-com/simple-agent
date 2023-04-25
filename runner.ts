@@ -21,12 +21,12 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
       resolve(0);
       return;
     }
-    spawn(`tsx`, runnerPath.split(' '), {
+    const prc = spawn(`tsx`, runnerPath.split(' '), {
       cwd: process.cwd(),
       env,
       stdio: 'inherit',
     })
-      .on('close', () => {
+    prc.on('close', () => {
         // update the hook url when the runner finished
         console.log('finished runner', {hasError});
         if (hasError) {
@@ -44,7 +44,8 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
           }).catch(() => null);
         }
       })
-      .stdout
+
+    prc.stdout
       .on('data', (data = '') => {
         if (!hasError && data.toString().includes(ERROR_MSG)) {
           console.log('an error occurred: ', data);
