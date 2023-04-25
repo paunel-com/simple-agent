@@ -24,7 +24,6 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
     const prc = spawn(`tsx`, runnerPath.split(' '), {
       cwd: process.cwd(),
       env,
-      stdio: 'inherit',
     })
     prc.on('close', () => {
         // update the hook url when the runner finished
