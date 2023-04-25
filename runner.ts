@@ -18,6 +18,7 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
   const runnerPath = join('runners/kinds', kind, `${runner}.ts`);
   return new Promise((resolve, reject) => {
     if (process.env.NODE_ENV !== 'production') {
+      resolve(0);
       return;
     }
     spawn(`tsx`, runnerPath.split(' '), {
@@ -42,6 +43,7 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
       .stdout
       .on('data', (data = '') => {
         if (!hasError && data.toString().includes(ERROR_MSG)) {
+          console.log('an error occurred: ', data);
           hasError = true;
         }
       });
