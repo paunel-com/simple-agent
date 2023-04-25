@@ -41,11 +41,11 @@ const server = createServer(async (req, res) => {
 
   const env = {
     ...process.env,
-    APP: app,
-    APPS: apps,
-    VM: getMachine(vm?.identifier) || vm,
-    REGISTRY: getRegistry(registry?.identifier) || registry,
-    SCRIPT: script,
+    APP: JSON.stringify(app || 'null'),
+    APPS: JSON.stringify(apps || 'null'),
+    VM: JSON.stringify(getMachine(vm?.identifier) || vm || 'null'),
+    REGISTRY: JSON.stringify(getRegistry(registry?.identifier) || registry || 'null'),
+    SCRIPT: JSON.stringify(script),
   }
 
   // execute the runner
