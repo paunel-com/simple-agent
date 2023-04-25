@@ -28,6 +28,7 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
     })
       .on('close', () => {
         // update the hook url when the runner finished
+        console.log('finished runner', {hasError});
         if (hasError) {
           reject(new Error('runner failed'))
         } else {
@@ -35,7 +36,10 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
         }
         if (hookUrl) {
           fetch(hookUrl, {
-            headers: {authorization: 'Bearer ' + jwt.sign({runner, sub}, hookToken), 'Content-Type': 'application/json'},
+            headers: {
+              authorization: 'Bearer ' + jwt.sign({runner, sub}, hookToken),
+              'Content-Type': 'application/json'
+            },
             body: JSON.stringify({success: !hasError})
           }).catch(() => null);
         }
