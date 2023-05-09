@@ -6,6 +6,7 @@ events {
 }
 
 http {
+  client_max_body_size 100M;
   types {
       text/html                                        html htm shtml;
       text/css                                         css;
