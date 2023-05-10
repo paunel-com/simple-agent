@@ -45,8 +45,7 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
       }
     })
 
-    prc.stdout
-      .on('data', (data = '') => {
+    prc.on('data', (data = '') => {
         if (!hasError && ERROR_MESSAGES.find(msg => data.toString().includes(msg))) {
           logger.log('an error occurred: ', data);
           hasError = true;
