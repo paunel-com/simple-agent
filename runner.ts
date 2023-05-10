@@ -9,6 +9,8 @@ const INVALID_PATH_CHARS = /[./\\]/;
 
 export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
 
+  logger.log('executing a runner', {runner, kind, sub});
+
   if (INVALID_PATH_CHARS.test(runner) || INVALID_PATH_CHARS.test(kind)) {
     throw new Error('runner does not exist');
   }
