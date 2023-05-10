@@ -52,8 +52,6 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
         if (!hasError && ERROR_MESSAGES.find(msg => data.toString().includes(msg))) {
           logger.log('an error occurred: ', data);
           hasError = true;
-        } else {
-          logger.log(data);
         }
       });
   })
