@@ -329,6 +329,6 @@ export async function intoMachine(vm: IVm, callback) {
       await $`history -c`;
     })
   } catch (e) {
-    console.log('error', e);
+    console.log('failed to login to machine', e);
   }
 }

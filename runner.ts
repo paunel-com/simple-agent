@@ -2,7 +2,7 @@ import {spawn} from 'child_process';
 import {join} from 'path';
 import jwt from 'jsonwebtoken';
 
-const ERROR_MSG = 'error in running scripts in vm';
+const ERROR_MESSAGES = ['failed to login to machine', 'error in running scripts in vm'];
 
 const INVALID_PATH_CHARS = /[./\\]/;
 
@@ -46,7 +46,7 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
 
     prc.stdout
       .on('data', (data = '') => {
-        if (!hasError && data.toString().includes(ERROR_MSG)) {
+        if (!hasError && ERROR_MESSAGES.find(msg => data.toString().includes(msg))) {
           console.log('an error occurred: ', data);
           hasError = true;
         }
