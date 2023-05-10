@@ -22,7 +22,7 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
       resolve(0);
       return;
     }
-    logger.log('running a runner: ', runnerPath)
+    logger.log('executing a runner: ', runnerPath)
     const prc = spawn(`tsx`, runnerPath.split(' '), {
       cwd: process.cwd(),
       env,
@@ -46,7 +46,7 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
       }
     })
 
-    prc.on('data', (data = '') => {
+    prc.stdout.on('data', (data = '') => {
         if (!hasError && ERROR_MESSAGES.find(msg => data.toString().includes(msg))) {
           logger.log('an error occurred: ', data);
           hasError = true;
