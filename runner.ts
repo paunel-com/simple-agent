@@ -22,6 +22,7 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
       resolve(0);
       return;
     }
+    logger.log('running a runner: ', runnerPath)
     const prc = spawn(`tsx`, runnerPath.split(' '), {
       cwd: process.cwd(),
       env,
