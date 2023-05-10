@@ -1,6 +1,7 @@
 import {spawn} from 'child_process';
 import {join} from 'path';
 import jwt from 'jsonwebtoken';
+import logger from './services/logger';
 
 const ERROR_MESSAGES = ['failed to login to machine', 'error in running scripts in vm'];
 
@@ -26,29 +27,31 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
       env,
     })
     prc.on('close', () => {
-        // update the hook url when the runner finished
-        console.log('finished runner', {hasError});
-        if (hasError) {
-          reject(new Error('runner failed'))
-        } else {
-          resolve({success: true})
-        }
-        if (hookUrl) {
-          fetch(hookUrl, {
-            headers: {
-              authorization: 'Bearer ' + jwt.sign({runner, sub}, hookToken),
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({success: !hasError})
-          }).catch(() => null);
-        }
-      })
+      // update the hook url when the runner finished
+      logger.log('finished runner', {hasError});
+      if (hasError) {
+        reject(new Error('runner failed'))
+      } else {
+        resolve({success: true})
+      }
+      if (hookUrl) {
+        fetch(hookUrl, {
+          headers: {
+            authorization: 'Bearer ' + jwt.sign({runner, sub}, hookToken),
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({success: !hasError})
+        }).catch(() => null);
+      }
+    })
 
     prc.stdout
       .on('data', (data = '') => {
         if (!hasError && ERROR_MESSAGES.find(msg => data.toString().includes(msg))) {
-          console.log('an error occurred: ', data);
+          logger.log('an error occurred: ', data);
           hasError = true;
+        } else {
+          logger.log(data);
         }
       });
   })

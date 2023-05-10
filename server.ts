@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import {ACCESS_TOKEN, PORT} from './server-config';
 import {executeRunner} from './runner';
 import {getMachine, getRegistry} from './services/local-storage.service';
+import logger from './services/logger';
 
 const server = createServer(async (req, res) => {
   let payload;
@@ -56,7 +57,7 @@ const server = createServer(async (req, res) => {
   } catch (err) {
     res.writeHead(500);
     res.end('failed')
-    console.log(err);
+    logger.log(err);
   }
 });
 
