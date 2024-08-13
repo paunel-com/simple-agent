@@ -1,8 +1,8 @@
-import {createServer} from 'http';
+import { createServer } from 'http';
 import jwt from 'jsonwebtoken';
-import {ACCESS_TOKEN, PORT} from './server-config';
-import {executeRunner} from './runner';
-import {getMachine, getRegistry} from './services/local-storage.service';
+import { ACCESS_TOKEN, PORT } from './server-config';
+import { executeRunner } from './runner';
+import { getMachine, getRegistry } from './services/local-storage.service';
 import logger from './services/logger';
 
 const server = createServer(async (req, res) => {
@@ -38,7 +38,7 @@ const server = createServer(async (req, res) => {
     return;
   }
 
-  const {app, apps, vm, registry, script, runner, kind} = data;
+  const { app, apps, vm, registry, script, runner, kind } = data;
 
   const env = {
     ...process.env,
@@ -51,7 +51,7 @@ const server = createServer(async (req, res) => {
 
   // execute the runner
   try {
-    await executeRunner({runner, kind, sub, env, hookUrl, hookToken});
+    await executeRunner({ runner, kind, sub, env, hookUrl, hookToken });
     res.writeHead(200);
     res.end('success');
   } catch (err) {

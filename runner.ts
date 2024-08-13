@@ -1,5 +1,5 @@
-import {spawn} from 'child_process';
-import {join} from 'path';
+import { spawn } from 'node:child_process';
+import { join } from 'node:path';
 import jwt from 'jsonwebtoken';
 import logger from './services/logger';
 
@@ -7,9 +7,9 @@ const ERROR_MESSAGES = ['failed to login to machine', 'error in running scripts 
 
 const INVALID_PATH_CHARS = /[./\\]/;
 
-export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
+export function executeRunner({ runner, kind, sub, env, hookUrl, hookToken }) {
 
-  logger.log('executing a runner', {runner, kind, sub});
+  logger.log('executing a runner', { runner, kind, sub });
 
   if (INVALID_PATH_CHARS.test(runner) || INVALID_PATH_CHARS.test(kind)) {
     throw new Error('runner does not exist');
@@ -31,28 +31,28 @@ export function executeRunner({runner, kind, sub, env, hookUrl, hookToken}) {
     })
     prc.on('close', () => {
       // update the hook url when the runner finished
-      logger.log('finished runner', {hasError});
+      logger.log('finished runner', { hasError });
       if (hasError) {
         reject(new Error('runner failed'))
       } else {
-        resolve({success: true})
+        resolve({ success: true })
       }
       if (hookUrl) {
         fetch(hookUrl, {
           headers: {
-            authorization: 'Bearer ' + jwt.sign({runner, sub}, hookToken),
+            authorization: 'Bearer ' + jwt.sign({ runner, sub }, hookToken),
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({success: !hasError})
+          body: JSON.stringify({ success: !hasError })
         }).catch(() => null);
       }
     })
 
     prc.stdout.on('data', (data = '') => {
-        if (!hasError && ERROR_MESSAGES.find(msg => data.toString().includes(msg))) {
-          logger.log('an error occurred: ', data);
-          hasError = true;
-        }
-      });
+      if (!hasError && ERROR_MESSAGES.find(msg => data.toString().includes(msg))) {
+        logger.log('an error occurred: ', data.toString());
+        hasError = true;
+      }
+    });
   })
 }
