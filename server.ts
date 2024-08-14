@@ -5,6 +5,10 @@ import { executeRunner } from './runner';
 import { getMachine, getRegistry } from './services/local-storage.service';
 import logger from './services/logger';
 
+if (process.env.DEBUG) {
+  logger.log('debug mode is enabled');
+}
+
 const server = createServer(async (req, res) => {
   let payload;
   let hookUrl: string = '';

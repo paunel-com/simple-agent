@@ -1,8 +1,8 @@
 // @ts-check
-import {Client} from 'ssh2';
-import {ProcessPromise, ProcessOutput, $} from 'zx';
+import { Client } from 'ssh2';
+import { ProcessPromise, ProcessOutput, $ } from 'zx';
 import chalk from 'chalk';
-import {IVm} from '../../types/vm';
+import { IVm } from '../../types/vm';
 
 
 if (process.env.NODE_ENV === 'production' && !process.env.DEBUG) {
@@ -50,13 +50,13 @@ export async function ssh(hostConfig, runner) {
    */
   const sshZx = createSshZx(conn, host);
 
-  const {promise, resolve, reject} = (() => {
+  const { promise, resolve, reject } = (() => {
     let resolve = /** @type {(_value: any) => void} */_value => {
     };
     let reject = /** @type {(ex: any) => void} */() => {
     };
     const promise = new Promise((...args) => ([resolve, reject] = args));
-    return {promise, resolve, reject};
+    return { promise, resolve, reject };
   })();
 
   conn.on('ready', () => {
@@ -73,7 +73,7 @@ export async function ssh(hostConfig, runner) {
       });
   });
 
-  const connectData: any = {host, port, username, passphrase};
+  const connectData: any = { host, port, username, passphrase };
   if (sshKey) {
     connectData.privateKey = sshKey;
   } else {
@@ -91,7 +91,7 @@ export async function ssh(hostConfig, runner) {
  */
 function createSshZx(client, hostname) {
   return (pieces, ...args) => {
-    const {verbose, prefix} = $;
+    const { verbose, prefix } = $;
     const __from = /** @type {string} */ (new Error().stack)
       .split(/^\s*at\s/m)[2]
       .trim();
@@ -109,7 +109,7 @@ function createSshZx(client, hostname) {
       cmd += s + pieces[++i];
     }
 
-    const {promise, resolve, reject} = (() => {
+    const { promise, resolve, reject } = (() => {
       let resolve = /** @type {(_value: any) => void} */_value => {
       };
       let reject = /** @type {(ex: any) => void} */() => {
@@ -123,7 +123,7 @@ function createSshZx(client, hostname) {
          */
         (...args) => ([resolve, reject] = args)
       );
-      return {promise, resolve, reject};
+      return { promise, resolve, reject };
     })();
 
     if (resolve == null || reject == null) {
