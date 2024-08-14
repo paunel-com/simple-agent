@@ -1,17 +1,19 @@
-import {intoMachine} from '../../services/ssh';
-import {addAppConfig, createNginxConfig, removeAppConfig, runNginxWithConf} from '../../services/nginx-manager';
-import {APP, DOCKER_NETWORK_NAME, REGISTRY, VM} from '../../../config';
-import {IApp} from '../../../types/app';
-import {IVm} from '../../../types/vm';
-import {IDockerRegistry} from '../../../types/registry';
+import { intoMachine } from '../../services/ssh';
+import { addAppConfig, createNginxConfig, removeAppConfig, runNginxWithConf } from '../../services/nginx-manager';
+import { APP, DOCKER_NETWORK_NAME, REGISTRY, VM } from '../../../config';
+import { IApp } from '../../../types/app';
+import { IVm } from '../../../types/vm';
+import { IDockerRegistry } from '../../../types/registry';
 import logger from '../../../services/logger';
 
 class DeployApp {
   async run(app: IApp, vm: IVm, registry?: IDockerRegistry) {
+    console.log('log in to machine');
     await intoMachine(vm, ($) => this.deployApp($, registry, app));
   }
 
-  async deployApp ($, registry, app: IApp) {
+  async deployApp($, registry, app: IApp) {
+    console.log('starting deployment');
     try {
       logger.log(await $`docker network create ${DOCKER_NETWORK_NAME}`);
       console.log('created network');
