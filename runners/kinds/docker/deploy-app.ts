@@ -14,6 +14,7 @@ class DeployApp {
   async deployApp ($, registry, app: IApp) {
     try {
       logger.log(await $`docker network create ${DOCKER_NETWORK_NAME}`);
+      logger.log('created network');
     } catch (e) {
       console.log('did not create network');
     }
@@ -21,6 +22,7 @@ class DeployApp {
     if (registry) {
       try {
         logger.log(await $`docker login -u "${registry.username}" -p "${registry.password}" ${registry.url}`)
+        logger.log('logged in to docker registry: ', registry.url);
       } catch {
         console.log('failed to login to docker registry');
       }
@@ -28,9 +30,12 @@ class DeployApp {
 
     try {
       logger.log(await $`docker pull ${app.imageUrl}`);
+      logger.log('pulled image', app.imageUrl);
       logger.log(await $`(docker rm -f ${app.internalHostname}) && echo "docker rm"`);
       await this.createEnvFile($, app);
+      logger.log('created env file');
       logger.log(await $`docker run --name ${app.internalHostname} --restart unless-stopped --env-file ${app.internalHostname}.env --network ${DOCKER_NETWORK_NAME} -d ${app.imageUrl}`);
+      logger.log('ran docker image', app.internalHostname);
       logger.log(await $`docker image prune -a -f`);
       logger.log(await $`rm ${app.internalHostname}.env`)
     } catch (err) {
