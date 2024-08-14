@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import {IVm} from '../../types/vm';
 
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' && !process.env.DEBUG) {
   $.verbose = false;
 }
 
