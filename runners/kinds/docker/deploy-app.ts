@@ -4,6 +4,7 @@ import {APP, DOCKER_NETWORK_NAME, REGISTRY, VM} from '../../../config';
 import {IApp} from '../../../types/app';
 import {IVm} from '../../../types/vm';
 import {IDockerRegistry} from '../../../types/registry';
+import logger from '../../../services/logger';
 
 class DeployApp {
   async run(app: IApp, vm: IVm, registry?: IDockerRegistry) {
@@ -12,26 +13,26 @@ class DeployApp {
 
   async deployApp ($, registry, app: IApp) {
     try {
-      await $`docker network create ${DOCKER_NETWORK_NAME}`;
+      logger.log(await $`docker network create ${DOCKER_NETWORK_NAME}`);
     } catch (e) {
       console.log('did not create network');
     }
 
     if (registry) {
       try {
-        await $`docker login -u "${registry.username}" -p "${registry.password}" ${registry.url}`
+        logger.log(await $`docker login -u "${registry.username}" -p "${registry.password}" ${registry.url}`)
       } catch {
         console.log('failed to login to docker registry');
       }
     }
 
     try {
-      await $`docker pull ${app.imageUrl}`;
-      await $`(docker rm -f ${app.internalHostname}) && echo "docker rm"`;
+      logger.log(await $`docker pull ${app.imageUrl}`);
+      logger.log(await $`(docker rm -f ${app.internalHostname}) && echo "docker rm"`);
       await this.createEnvFile($, app);
-      await $`docker run --name ${app.internalHostname} --restart unless-stopped --env-file ${app.internalHostname}.env --network ${DOCKER_NETWORK_NAME} -d ${app.imageUrl}`;
-      await $`docker image prune -a -f`;
-      await $`rm ${app.internalHostname}.env`
+      logger.log(await $`docker run --name ${app.internalHostname} --restart unless-stopped --env-file ${app.internalHostname}.env --network ${DOCKER_NETWORK_NAME} -d ${app.imageUrl}`);
+      logger.log(await $`docker image prune -a -f`);
+      logger.log(await $`rm ${app.internalHostname}.env`)
     } catch (err) {
       console.log('error in running scripts in vm', err)
     }
