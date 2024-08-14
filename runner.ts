@@ -49,6 +49,9 @@ export function executeRunner({ runner, kind, sub, env, hookUrl, hookToken }) {
     })
 
     prc.stdout.on('data', (data = '') => {
+      if (process.env.LOG_LEVEL === 'debug') {
+        logger.log(data.toString());
+      }
       if (!hasError && ERROR_MESSAGES.find(msg => data.toString().includes(msg))) {
         logger.log('an error occurred: ', data.toString());
         hasError = true;
