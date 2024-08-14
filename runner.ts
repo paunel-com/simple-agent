@@ -49,7 +49,7 @@ export function executeRunner({ runner, kind, sub, env, hookUrl, hookToken }) {
     })
 
     prc.stdout.on('data', (data = '') => {
-      if (process.env.LOG_LEVEL === 'debug') {
+      if (process.env.DEBUG) {
         logger.log(data.toString());
       }
       if (!hasError && ERROR_MESSAGES.find(msg => data.toString().includes(msg))) {
