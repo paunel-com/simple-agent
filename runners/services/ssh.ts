@@ -7,6 +7,9 @@ import { IVm } from '../../types/vm';
 
 if (process.env.NODE_ENV === 'production' && !process.env.DEBUG) {
   $.verbose = false;
+} else {
+  $.verbose = true;
+  console.log('running in debug mode');
 }
 
 
