@@ -1,4 +1,4 @@
-import { createServer } from 'http';
+import { createServer } from 'node:http';
 import jwt from 'jsonwebtoken';
 import { ACCESS_TOKEN, PORT } from './server-config';
 import { executeRunner } from './runner';
