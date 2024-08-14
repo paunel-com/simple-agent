@@ -78,7 +78,11 @@ console.log('running deployment script', APP.identifier, VM.identifier);
 runner.run(APP, VM, REGISTRY)
   .then(() => {
     console.log('finished')
+    process.exit(0)
   })
   .catch((err) => {
     console.log('failed', err)
+    process.exit(1)
   })
+
+setInterval(() => console.log('.'), 10000)
